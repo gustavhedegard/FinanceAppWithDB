@@ -24,8 +24,7 @@ public class DatabaseHandler {
     public string CreateAccountTableQuery() {
         
         return @"CREATE TABLE IF NOT EXISTS accounts (
-            id UUID PRIMARY KEY,
-            user_name TEXT NOT NULL,
+            user_name TEXT PRIMARY KEY,
             balance DECIMAL CHECK(balance <= 0)
         )";
     }
@@ -34,6 +33,7 @@ public class DatabaseHandler {
 
         return @"CREATE TABLE IF NOT EXISTS transactions (
             id UUID PRIMARY KEY,
+            user TEXT REFERENCES accounts(user_name),
             amount DECIMAL NOT NULL,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
