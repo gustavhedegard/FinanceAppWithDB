@@ -24,7 +24,8 @@ public class DatabaseHandler {
     public string CreateAccountTableQuery() {
         
         return @"CREATE TABLE IF NOT EXISTS accounts (
-            user_name TEXT PRIMARY KEY,
+            account_id UUID PRIMARY KEY
+            name TEXT NOT NULL,
             balance DECIMAL CHECK(balance <= 0)
         )";
     }
@@ -33,10 +34,20 @@ public class DatabaseHandler {
 
         return @"CREATE TABLE IF NOT EXISTS transactions (
             id UUID PRIMARY KEY,
-            user TEXT REFERENCES accounts(user_name),
+            account_id UUID REFERENCES accounts(account_id),
             amount DECIMAL NOT NULL,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
+    }
+
+    public void InsertDepositSql(double amount) {
+        var insertDepositSql = @"INSERT INTO transactions (amount) VALUES (@amount)";
+
+        using (var insertDepositCmd = new NpgsqlCommand(insertDepositSql, npgsqlConnection)) {
+            insertDepositCmd.Parameters.AddWithValue("@amount", amount);
+
+            insertDepositCmd.ExecuteNonQuery();
+        }
     }
 
     public void Close() {
