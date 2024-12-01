@@ -11,8 +11,7 @@ public class DatabaseHandler {
 
         npgsqlConnection.Open();
 
-        ExecuteSqlCmd(CreateAccountTableQuery());
-        ExecuteSqlCmd(CreateTransactionTableQuery());
+        ExecuteSqlCmd(CreateTableQueries());
     }
 
     public void ExecuteSqlCmd(string query) {
@@ -21,18 +20,16 @@ public class DatabaseHandler {
         executeSqlCmd.ExecuteNonQuery();
     }
 
-    public string CreateAccountTableQuery() {
+    public string CreateTableQueries() {
         
-        return @"CREATE TABLE IF NOT EXISTS accounts (
+        return @"
+            CREATE TABLE IF NOT EXISTS accounts (
             account_id UUID PRIMARY KEY
             name TEXT NOT NULL,
             balance DECIMAL CHECK(balance <= 0)
-        )";
-    }
-
-    public string CreateTransactionTableQuery() {
-
-        return @"CREATE TABLE IF NOT EXISTS transactions (
+        );
+            
+            CREATE TABLE IF NOT EXISTS transactions (
             id UUID PRIMARY KEY,
             account_id UUID REFERENCES accounts(account_id),
             amount DECIMAL NOT NULL,
