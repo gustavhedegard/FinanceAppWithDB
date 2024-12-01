@@ -4,40 +4,6 @@ public class PostgresUserService : IUserService {
     private NpgsqlConnection npgsqlConnection;
     private Guid? _loggedInUser;
 
-    public PostgresUserService() {
-
-        string connectionString = "Host=localhost;Username=postgres;Password=password;Database=finance_app";
-
-        this.npgsqlConnection = new NpgsqlConnection(connectionString);
-
-        npgsqlConnection.Open();
-
-        ExecuteSqlCmd(CreateTableQueries());
-    }
-
-    public void ExecuteSqlCmd(string query) {
-
-        using var executeSqlCmd = new NpgsqlCommand(query, npgsqlConnection); 
-        executeSqlCmd.ExecuteNonQuery();
-    }
-
-    public string CreateTableQueries() {
-        
-        return @"
-            CREATE TABLE IF NOT EXISTS users (
-            account_id UUID PRIMARY KEY
-            name TEXT NOT NULL,
-            balance DECIMAL CHECK(balance <= 0)
-        );
-            
-            CREATE TABLE IF NOT EXISTS transactions (
-            id UUID PRIMARY KEY,
-            account_id UUID REFERENCES accounts(account_id),
-            amount DECIMAL NOT NULL,
-            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-    }
-
     public User? GetLoggedInUser() {
         if (_loggedInUser == null) {
            
@@ -115,18 +81,6 @@ public class PostgresUserService : IUserService {
 
     public void Logout() {
         _loggedInUser = null;
-    }
-
-    
-
-    public void InsertDepositSql(double amount) {
-        var insertDepositSql = @"INSERT INTO transactions (id, date, type, amount) VALUES (@amount)";
-
-        using (var insertDepositCmd = new NpgsqlCommand(insertDepositSql, npgsqlConnection)) {
-            insertDepositCmd.Parameters.AddWithValue("@amount", amount);
-
-            insertDepositCmd.ExecuteNonQuery();
-        }
     }
 
     public void Close() {
