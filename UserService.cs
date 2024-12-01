@@ -1,4 +1,4 @@
-public interface ITransactionService {
+public interface IUserService {
     User RegisterUser(string name, string password);
     User? Login(string name, string password);
     void Logout();
@@ -6,5 +6,6 @@ public interface ITransactionService {
     User CheckBalance();
     User TransferFunds();
     User RemoveTransaction();
+    User GetTransaction();
 
 }

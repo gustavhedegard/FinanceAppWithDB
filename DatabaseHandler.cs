@@ -1,9 +1,10 @@
 using Npgsql;
-public class DatabaseHandler {
+public class PostgresUserService : IUserService {
 
     private NpgsqlConnection npgsqlConnection;
+    private Guid? _loggedInUser;
 
-    public DatabaseHandler() {
+    public PostgresUserService() {
 
         string connectionString = "Host=localhost;Username=postgres;Password=password;Database=finance_app";
 
@@ -23,7 +24,7 @@ public class DatabaseHandler {
     public string CreateTableQueries() {
         
         return @"
-            CREATE TABLE IF NOT EXISTS accounts (
+            CREATE TABLE IF NOT EXISTS users (
             account_id UUID PRIMARY KEY
             name TEXT NOT NULL,
             balance DECIMAL CHECK(balance <= 0)
@@ -37,8 +38,89 @@ public class DatabaseHandler {
         )";
     }
 
+    public User? GetLoggedInUser() {
+        if (_loggedInUser == null) {
+           
+            return null;
+        }
+
+        var sql = @"SELECT * FROM users WHERE id = @id";
+        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        cmd.Parameters.AddWithValue("@id", _loggedInUser);
+
+        var reader = cmd.ExecuteReader();
+        if(!reader.Read()) {
+            return null;
+        }
+
+        var user = new User {
+            Id = reader.GetGuid(0),
+            Name = reader.GetString(1),
+            Password = reader.GetString(2)
+        };
+
+        return user;
+    }
+
+    public User RegisterUser(string name, string password) {
+    
+        var user = new User {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Password = password,
+            Balance = 0
+        };
+
+        var sql = @"INSERT INTO users (id, name, password, balance) VALUES (
+            @id,
+            @name,
+            @password
+            @balance
+        )";
+
+        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        cmd.Parameters.AddWithValue("@id", user.Id);
+        cmd.Parameters.AddWithValue("@name",user.Name);
+        cmd.Parameters.AddWithValue(@"password", user.Password);
+        cmd.Parameters.AddWithValue(@"balance", user.Balance);
+
+        cmd.ExecuteNonQuery();
+
+        return user;
+
+    }
+
+    public User? Login(string name, string password){
+        var sql = @"SELECT * FROM users WHERE name = @name AND password = @password";
+
+        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@password", password);
+
+        var reader = cmd.ExecuteReader();
+        if (!reader.Read()) {
+            return null;
+        }
+
+        var user = new User {
+            Id = reader.GetGuid(0),
+            Name = reader.GetString(1),
+            Password = reader.GetString(2)
+        };
+
+        _loggedInUser = user.Id;
+
+        return user;
+    }
+
+    public void Logout() {
+        _loggedInUser = null;
+    }
+
+    
+
     public void InsertDepositSql(double amount) {
-        var insertDepositSql = @"INSERT INTO transactions (amount) VALUES (@amount)";
+        var insertDepositSql = @"INSERT INTO transactions (id, date, type, amount) VALUES (@amount)";
 
         using (var insertDepositCmd = new NpgsqlCommand(insertDepositSql, npgsqlConnection)) {
             insertDepositCmd.Parameters.AddWithValue("@amount", amount);
