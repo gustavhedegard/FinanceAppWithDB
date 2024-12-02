@@ -1,8 +1,12 @@
 using Npgsql;
 public class PostgresUserService : IUserService {
 
-    private NpgsqlConnection npgsqlConnection;
+    private NpgsqlConnection _npgsqlConnection;
     private Guid? _loggedInUser;
+
+    public PostgresUserService(NpgsqlConnection npgsqlConnection) {
+        _npgsqlConnection = npgsqlConnection;
+    }
 
     public User? GetLoggedInUser() {
         if (_loggedInUser == null) {
@@ -11,7 +15,7 @@ public class PostgresUserService : IUserService {
         }
 
         var sql = @"SELECT * FROM users WHERE id = @id";
-        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", _loggedInUser);
 
         var reader = cmd.ExecuteReader();
@@ -40,11 +44,11 @@ public class PostgresUserService : IUserService {
         var sql = @"INSERT INTO users (id, name, password, balance) VALUES (
             @id,
             @name,
-            @password
+            @password,
             @balance
         )";
 
-        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", user.Id);
         cmd.Parameters.AddWithValue("@name",user.Name);
         cmd.Parameters.AddWithValue(@"password", user.Password);
@@ -59,7 +63,7 @@ public class PostgresUserService : IUserService {
     public User? Login(string name, string password){
         var sql = @"SELECT * FROM users WHERE name = @name AND password = @password";
 
-        using var cmd = new NpgsqlCommand(sql, npgsqlConnection);
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@name", name);
         cmd.Parameters.AddWithValue("@password", password);
 
@@ -84,6 +88,6 @@ public class PostgresUserService : IUserService {
     }
 
     public void Close() {
-        npgsqlConnection.Close();
+        _npgsqlConnection.Close();
     }
 }

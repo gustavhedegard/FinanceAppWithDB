@@ -3,5 +3,6 @@ public interface ITransactionService {
     double GetBalance();
     Transaction RemoveTransaction();
     Transaction GetTransaction();
+    void SaveTransaction(Guid UserId, double amount, string type);
 
 }
