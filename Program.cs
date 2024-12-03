@@ -38,11 +38,19 @@ class Program
         User? user = userService.Login("Gustav", "123");
 
         if (user != null) {
-            Console.WriteLine(user.Id);
+            Console.WriteLine(user.Id + "\n" + user.Name);
         }
         else {
             Console.WriteLine("Wrong name or password.");
         }
+
+        // User? user = userService.GetLoggedInUser();
+        // if(user != null) {
+        //     Console.WriteLine("Id: " + user.Id + "\n" + "name: " + user.Name);
+        // }
+        // else {
+        //     Console.WriteLine("No user found");
+        // }
 
     }
 }
