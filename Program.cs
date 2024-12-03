@@ -3,8 +3,6 @@ using Npgsql;
 
 class Program
 {
-
-    private PostgresUserService postgresUserService;
     static void Main(string[] args)
     {
         
@@ -45,7 +43,6 @@ class Program
         else {
             Console.WriteLine("Wrong name or password.");
         }
-
 
     }
 }
