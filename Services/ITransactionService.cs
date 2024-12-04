@@ -1,8 +1,8 @@
 public interface ITransactionService {
-    double TransferFunds(double amount);
+    double TransferFunds(double amount, string type);
     double GetBalance();
-    Transaction RemoveTransaction();
+    void RemoveTransaction();
     Transaction GetTransaction();
-    void SaveTransaction(Guid UserId, double amount, string type);
+    Transaction SaveTransaction(double amount, string type);
 
 }

@@ -8,7 +8,7 @@ class Program
         
         string connectionString = "Host=localhost;Username=postgres;Password=password;Database=finance_app";
 
-        var npgsqlConnection = new NpgsqlConnection(connectionString);
+        using var npgsqlConnection = new NpgsqlConnection(connectionString);
 
         npgsqlConnection.Open();
 
@@ -17,15 +17,15 @@ class Program
             id UUID PRIMARY KEY,
             name TEXT NOT NULL,
             password TEXT NOT NULL,
-            balance DECIMAL CHECK(balance <= 0)
+            balance DECIMAL CHECK(balance >= 0)
         );
             
             CREATE TABLE IF NOT EXISTS transactions (
             id UUID PRIMARY KEY,
             user_id UUID REFERENCES users(id),
             amount DECIMAL NOT NULL,
-            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            type TEXT NOT NULL
+            type TEXT NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
 
         using var executeSqlCmd = new NpgsqlCommand(createTablesQuery, npgsqlConnection); 
@@ -35,25 +35,15 @@ class Program
 
         LoginMenu loginMenu = new LoginMenu(userService);
         loginMenu.Display();
+        // var loggedInUser = new User() {
+        //     Name = "gustav",
+        //     Password = "123"
+        // };
+        var loggedInUser = userService.GetLoggedInUser();
 
-        // //userService.RegisterUser("Gustav", "123");
+        Console.WriteLine(loggedInUser.Id);
+        var transactionService = new PostgresTransactionService(npgsqlConnection, userService);
 
-        // User? user = userService.Login("Gustav", "123");
-
-        // if (user != null) {
-        //     Console.WriteLine(user.Id + "\n" + user.Name);
-        // }
-        // else {
-        //     Console.WriteLine("Wrong name or password.");
-        // }
-
-        // User? user = userService.GetLoggedInUser();
-        // if(user != null) {
-        //     Console.WriteLine("Id: " + user.Id + "\n" + "name: " + user.Name);
-        // }
-        // else {
-        //     Console.WriteLine("No user found");
-        // }
-
+        transactionService.SaveTransaction(400, "withdrawal");
     }
 }

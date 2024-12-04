@@ -18,7 +18,7 @@ public class PostgresUserService : IUserService {
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", _loggedInUser);
 
-        var reader = cmd.ExecuteReader();
+        using var reader = cmd.ExecuteReader();
         if(!reader.Read()) {
             return null;
         }
@@ -67,7 +67,7 @@ public class PostgresUserService : IUserService {
         cmd.Parameters.AddWithValue("@name", name);
         cmd.Parameters.AddWithValue("@password", password);
 
-        var reader = cmd.ExecuteReader();
+        using var reader = cmd.ExecuteReader();
         if (!reader.Read()) {
             return null;
         }
