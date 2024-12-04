@@ -17,7 +17,8 @@ public class LoginMenu {
             User? user = _postgresUserService.Login(name, password);
             if (user != null) {
                 Console.WriteLine("Login complete!");
-                
+                //BankMenu(_postgresUserService);
+
             }
             else {
                 Console.WriteLine("Wrong name or password");
