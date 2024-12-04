@@ -35,13 +35,8 @@ class Program
 
         LoginMenu loginMenu = new LoginMenu(userService);
         loginMenu.Display();
-        // var loggedInUser = new User() {
-        //     Name = "gustav",
-        //     Password = "123"
-        // };
         var loggedInUser = userService.GetLoggedInUser();
 
-        Console.WriteLine(loggedInUser.Id);
         var transactionService = new PostgresTransactionService(npgsqlConnection, userService);
 
         transactionService.SaveTransaction(400, "withdrawal");
