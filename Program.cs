@@ -33,16 +33,19 @@ class Program
 
         var userService = new PostgresUserService(npgsqlConnection);
 
-        //userService.RegisterUser("Gustav", "123");
+        LoginMenu loginMenu = new LoginMenu(userService);
+        loginMenu.Display();
 
-        User? user = userService.Login("Gustav", "123");
+        // //userService.RegisterUser("Gustav", "123");
 
-        if (user != null) {
-            Console.WriteLine(user.Id + "\n" + user.Name);
-        }
-        else {
-            Console.WriteLine("Wrong name or password.");
-        }
+        // User? user = userService.Login("Gustav", "123");
+
+        // if (user != null) {
+        //     Console.WriteLine(user.Id + "\n" + user.Name);
+        // }
+        // else {
+        //     Console.WriteLine("Wrong name or password.");
+        // }
 
         // User? user = userService.GetLoggedInUser();
         // if(user != null) {

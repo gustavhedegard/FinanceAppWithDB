@@ -2,7 +2,7 @@ using Npgsql;
 public class PostgresUserService : IUserService {
 
     private NpgsqlConnection _npgsqlConnection;
-    private Guid? _loggedInUser;
+    private Guid? _loggedInUser = null;
 
     public PostgresUserService(NpgsqlConnection npgsqlConnection) {
         _npgsqlConnection = npgsqlConnection;
