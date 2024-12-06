@@ -12,10 +12,12 @@ public class PostgresTransactionService : ITransactionService {
     public double GetBalance() {
         var sql = "SELECT balance FROM users WHERE id = @id";
 
-        using var cmd = new NpgsqlCommand(sql,_npgsqlConnection);
-        //cmd.Parameters.AddWithValue("@id", _loggedInUser);
+        var user = _userService.GetLoggedInUser();
 
-        var reader = cmd.ExecuteReader();
+        using var cmd = new NpgsqlCommand(sql,_npgsqlConnection);
+        cmd.Parameters.AddWithValue("@id", user.Id);
+
+        using var reader = cmd.ExecuteReader();
         if(!reader.Read()) {
             return -1;
         }

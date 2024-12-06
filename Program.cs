@@ -32,13 +32,10 @@ class Program
         executeSqlCmd.ExecuteNonQuery();
 
         var userService = new PostgresUserService(npgsqlConnection);
-
-        LoginMenu loginMenu = new LoginMenu(userService);
-        loginMenu.Display();
-        var loggedInUser = userService.GetLoggedInUser();
-
         var transactionService = new PostgresTransactionService(npgsqlConnection, userService);
+        var bankMenu = new BankMenu(transactionService);
+        var loginMenu = new LoginMenu(userService, bankMenu);
 
-        transactionService.SaveTransaction(400, "withdrawal");
+        loginMenu.Display();
     }
 }
