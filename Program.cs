@@ -31,11 +31,19 @@ class Program
         using var executeSqlCmd = new NpgsqlCommand(createTablesQuery, npgsqlConnection); 
         executeSqlCmd.ExecuteNonQuery();
 
-        var userService = new PostgresUserService(npgsqlConnection);
-        var transactionService = new PostgresTransactionService(npgsqlConnection, userService);
-        var bankMenu = new BankMenu(transactionService);
-        var loginMenu = new LoginMenu(userService, bankMenu);
+        IUserService userService = new PostgresUserService(npgsqlConnection);
+        ITransactionService transactionService = new PostgresTransactionService(npgsqlConnection, userService);
+        IMenuService menuService = new SimpleMenuService();
+        var loginMenu = new LoginMenu(userService, menuService, transactionService);
+        menuService.SetMenu(loginMenu);
 
-        loginMenu.Display();
+        while(true) {
+            string? inputCommand = Console.ReadLine();
+            if (inputCommand != null) {
+                menuService.GetMenu().ExecuteCommand(inputCommand);
+            } else {
+                break;
+            }
+        }
     }
 }
