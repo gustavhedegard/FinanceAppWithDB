@@ -7,7 +7,7 @@ public class UserMenu : Menu {
     }
 
     public override void Display() {
-        Console.WriteLine($"Welcome to the usermenu!");
+        Console.WriteLine($"Welcome!");
     }
         
 }

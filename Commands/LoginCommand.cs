@@ -7,8 +7,8 @@ public class LoginCommand : Command {
 
     public override void Execute(string[] args) {
 
-        string name = args[0];
-        string description = args[1];
+        string name = args[1];
+        string description = args[2];
 
         User? user = userService.Login(name, description);
         if (user == null) {
