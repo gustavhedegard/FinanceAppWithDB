@@ -46,9 +46,36 @@ public class PostgresTransactionService : ITransactionService {
         cmd.ExecuteNonQuery();
     }
 
-    public Transaction GetTransaction() {
-        return null;
+    public List<Transaction> GetAllTransactions() {
+        var user = _userService.GetLoggedInUser();
 
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+
+        string sql = "SELECT id, user_id, amount, type, date FROM transactions WHERE user_id = @userId";
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@userId", user.Id);
+
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            var transaction = new Transaction
+            {
+                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                Type = reader.GetString(reader.GetOrdinal("type")),
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+            };
+
+            transactions.Add(transaction);
+        }
+
+        return transactions;
     }
 
     

@@ -5,7 +5,16 @@ public class RemoveTransactionCommand : Command {
 
     public override void Execute(string[] args) {
 
-        Guid id = Guid.Parse(args[1]);
+        List<Transaction> transactions = transactionService.GetAllTransactions();
+
+        foreach (Transaction transaction in transactions) {
+            Console.WriteLine($"{transaction.Id}\n{transaction.Amount}");
+            Console.WriteLine("");
+        }
+
+        Console.WriteLine("Enter transaction to remove by id:");
+
+        Guid id = Guid.Parse(Console.ReadLine());
 
         transactionService.RemoveTransaction(id);
     }
