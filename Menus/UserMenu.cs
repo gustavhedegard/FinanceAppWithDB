@@ -5,6 +5,7 @@ public class UserMenu : Menu {
         AddCommand(new LogoutCommand(userService, transactionService, menuService));
         AddCommand(new CheckBalanceCommand(userService, transactionService, menuService));
         AddCommand(new MakeTransactionCommand(userService, transactionService, menuService));
+        AddCommand(new RemoveTransactionCommand(userService, transactionService,menuService));
     }
 
     public override void Display() {

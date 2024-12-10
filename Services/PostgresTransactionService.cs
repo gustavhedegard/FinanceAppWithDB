@@ -30,8 +30,20 @@ public class PostgresTransactionService : ITransactionService {
         return -1;
         
     }
-    public void RemoveTransaction() {
+    public void RemoveTransaction(Guid id) {
+        var user = _userService.GetLoggedInUser();
 
+        if(user == null) {
+            throw new ArgumentException("You are not logged in."); 
+        }
+
+        var sql = @"DELETE FROM transactions
+                    WHERE id = @id;";
+
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        cmd.ExecuteNonQuery();
     }
 
     public Transaction GetTransaction() {
@@ -56,37 +68,33 @@ public class PostgresTransactionService : ITransactionService {
             Date = DateTime.Now,
             Type = type
         };
-        try {
-            var sql = @"BEGIN;
-                        UPDATE users
-                        SET balance = balance - @amount
-                        WHERE id = @userId;
-                        
-                    COMMIT;
+                         
+        var sql = @"
+                BEGIN;
+                    UPDATE users
+                    SET balance = balance - @amount 
+                    WHERE id = @userId; 
+                COMMIT;
 
                     INSERT INTO transactions(id, user_id, amount, type, date) VALUES (
-                        @id,
-                        @userId,
-                        @amount,
-                        @type,
-                        @date
+                    @id,
+                    @userId,
+                    @amount,
+                    @type,
+                    @date
                     );
-                    COMMIT;
-                    ";
-        
-                
+                COMMIT;
+                ";
 
-            using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-            cmd.Parameters.AddWithValue("@id", transaction.Id);
-            cmd.Parameters.AddWithValue("@userId", user.Id);
-            cmd.Parameters.AddWithValue("@amount", amount);
-            cmd.Parameters.AddWithValue("@type", type);
-            cmd.Parameters.AddWithValue("@date", transaction.Date);
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@id", transaction.Id);
+        cmd.Parameters.AddWithValue("@userId", user.Id);
+        cmd.Parameters.AddWithValue("@amount", amount);
+        cmd.Parameters.AddWithValue("@type", type);
+        cmd.Parameters.AddWithValue("@date", transaction.Date);
 
-            cmd.ExecuteNonQuery();
-            }
-            catch (ArgumentException exception) {
-                Console.WriteLine("Insufficient funds: " + exception.Message);
-            }
+        cmd.ExecuteNonQuery();
+
+        return transaction;
     }
 }

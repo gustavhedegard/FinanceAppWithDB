@@ -17,7 +17,7 @@ class Program
             id UUID PRIMARY KEY,
             name TEXT NOT NULL,
             password TEXT NOT NULL,
-            balance DECIMAL CHECK(balance >= 0)
+            balance DECIMAL
         );
             
             CREATE TABLE IF NOT EXISTS transactions (
