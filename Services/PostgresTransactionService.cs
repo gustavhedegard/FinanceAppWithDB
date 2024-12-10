@@ -41,7 +41,7 @@ public class PostgresTransactionService : ITransactionService {
 
     
 
-    public Transaction SaveTransaction(double amount, string type) {
+    public Transaction ExecuteTransaction(string type,double amount) {
 
         var user = _userService.GetLoggedInUser();
 
@@ -56,24 +56,37 @@ public class PostgresTransactionService : ITransactionService {
             Date = DateTime.Now,
             Type = type
         };
+        try {
+            var sql = @"BEGIN;
+                        UPDATE users
+                        SET balance = balance - @amount
+                        WHERE id = @userId;
+                        
+                    COMMIT;
 
-        var sql = @"INSERT INTO transactions(id, user_id, amount, type, date) VALUES (
-            @id,
-            @userId,
-            @amount,
-            @type,
-            @date
-        )";
+                    INSERT INTO transactions(id, user_id, amount, type, date) VALUES (
+                        @id,
+                        @userId,
+                        @amount,
+                        @type,
+                        @date
+                    );
+                    COMMIT;
+                    ";
+        
+                
 
-        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@id", transaction.Id);
-        cmd.Parameters.AddWithValue("@userId", transaction.User.Id);
-        cmd.Parameters.AddWithValue("@amount", amount);
-        cmd.Parameters.AddWithValue("@type", type);
-        cmd.Parameters.AddWithValue("@date", transaction.Date);
+            using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+            cmd.Parameters.AddWithValue("@id", transaction.Id);
+            cmd.Parameters.AddWithValue("@userId", user.Id);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@type", type);
+            cmd.Parameters.AddWithValue("@date", transaction.Date);
 
-        cmd.ExecuteNonQuery();
-
-        return transaction;
+            cmd.ExecuteNonQuery();
+            }
+            catch (ArgumentException exception) {
+                Console.WriteLine("Insufficient funds: " + exception.Message);
+            }
     }
 }

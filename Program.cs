@@ -24,7 +24,7 @@ class Program
             id UUID PRIMARY KEY,
             user_id UUID REFERENCES users(id),
             amount DECIMAL NOT NULL,
-            type TEXT NOT NULL CHECK(),
+            type TEXT NOT NULL,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
 
