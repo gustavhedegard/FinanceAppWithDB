@@ -7,5 +7,11 @@ public class SearchByYearCommand : Command {
         int year = int.Parse(args[1]);
 
         List<Transaction> transactions = transactionService.SearchByYear(year);
+
+        foreach(Transaction transaction in transactions) {
+
+            Console.WriteLine(transaction.ToString());
+            Console.WriteLine("");
+        }
     }
 }

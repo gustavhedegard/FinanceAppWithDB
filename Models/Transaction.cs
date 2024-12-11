@@ -5,4 +5,8 @@ public class Transaction {
     public DateTime Date { get; set; }
     public required string Type { get; set; }
 
+    public override string ToString() {
+        return $"Transaction ID - {Id}\nUser ID - {User.Id}\nAmount - {Amount}\nCreated at - {Date}\nType - {Type}";
+    }
+
 }

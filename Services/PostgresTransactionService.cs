@@ -89,10 +89,30 @@ public class PostgresTransactionService : ITransactionService {
         }
 
         List<Transaction> transactions = new List<Transaction>();
-        return null;
-    }
 
-    
+        var sql = @"SELECT *
+                    FROM transactions
+                    WHERE EXTRACT(YEAR FROM date) = @year;";
+            
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@year", year);
+
+        using var reader = cmd.ExecuteReader();
+        while(reader.Read()) {
+            var transaction = new Transaction {
+
+                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                Type = reader.GetString(reader.GetOrdinal("type")),
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+            };
+
+            transactions.Add(transaction);
+        }
+
+        return transactions;
+    }
 
     public void ExecuteTransaction(string type,double amount) {
 

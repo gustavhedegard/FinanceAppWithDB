@@ -9,6 +9,7 @@ public class UserMenu : Menu {
         AddCommand(new WithdrawCommand(userService, transactionService, menuService));
         AddCommand(new RemoveTransactionCommand(userService, transactionService,menuService));
         AddCommand(new DepositCommand(userService, transactionService, menuService));
+        AddCommand(new SearchByYearCommand(userService, transactionService, menuService));
     }
 
     public override void Display() {
