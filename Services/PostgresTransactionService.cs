@@ -81,6 +81,17 @@ public class PostgresTransactionService : ITransactionService {
         return transactions;
     }
 
+    public List<Transaction> SearchByYear(int year) {
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+        return null;
+    }
+
     
 
     public void ExecuteTransaction(string type,double amount) {
@@ -99,22 +110,31 @@ public class PostgresTransactionService : ITransactionService {
             Type = type
         };
                          
-        var sql = @"
-                BEGIN;
-                    UPDATE users
-                    SET balance = balance + @amount 
-                    WHERE id = @userId; 
-                COMMIT;
+        var sql = $@"
+                DO $$
+        DECLARE
+            sufficient_funds DECIMAL;
+        BEGIN
+            -- Check the user's balance
+            SELECT balance INTO sufficient_funds
+            FROM users
+            WHERE id = '{user.Id}';
 
-                    INSERT INTO transactions(id, user_id, amount, type, date) VALUES (
-                    @id,
-                    @userId,
-                    @amount,
-                    @type,
-                    @date
-                    );
-                COMMIT;
-                ";
+            -- Raise an exception if insufficient funds
+            IF sufficient_funds < {amount} THEN
+                RAISE EXCEPTION 'Insufficient funds';
+            END IF;
+            END $$;
+
+            -- Insert the transaction
+            INSERT INTO transactions (id, user_id, amount, type, date)
+            VALUES (@id, @userId, @amount, @type, @date);
+
+            -- Update the user's balance
+            UPDATE users
+            SET balance = balance + @amount
+            WHERE id = @userId;
+        ";
 
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", transaction.Id);

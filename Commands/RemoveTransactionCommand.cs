@@ -9,14 +9,15 @@ public class RemoveTransactionCommand : Command {
 
         int i = 0;
         for (i = 0; i < transactions.Count; i++ ) {
-            Console.WriteLine($"{i}\nId: {transactions[i].Id}\nAmount: {transactions[i].Amount}");
+            Console.WriteLine($"TRANSACTION\nindex: {i}\nId: {transactions[i].Id}\nAmount: {transactions[i].Amount}");
             Console.WriteLine("");
         }
 
-        Console.WriteLine("Enter transaction to remove by id:");
+        Console.WriteLine("Enter index of transaction to remove:");
 
         int input = int.Parse(Console.ReadLine());
 
         transactionService.RemoveTransaction(transactions[input].Id);
+        Console.WriteLine("Removed transaction succesfully.");
     }
 }

@@ -4,4 +4,6 @@ public interface ITransactionService {
     List<Transaction> GetAllTransactions();
     void ExecuteTransaction(string type, double amount);
 
+    List<Transaction> SearchByYear(int year);
+
 }
