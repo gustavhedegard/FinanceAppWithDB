@@ -8,7 +8,7 @@ public class RemoveTransactionCommand : Command {
         List<Transaction> transactions = transactionService.GetAllTransactions();
 
         foreach (Transaction transaction in transactions) {
-            Console.WriteLine($"{transaction.Id}\n{transaction.Amount}");
+            Console.WriteLine($"Id: {transaction.Id}\nAmount: {transaction.Amount}");
             Console.WriteLine("");
         }
 

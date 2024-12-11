@@ -14,6 +14,10 @@ public class PostgresTransactionService : ITransactionService {
 
         var user = _userService.GetLoggedInUser();
 
+        if(user == null) {
+            throw new ArgumentException("You are not logged in."); 
+        }
+
         using var cmd = new NpgsqlCommand(sql,_npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", user.Id);
 
@@ -55,7 +59,10 @@ public class PostgresTransactionService : ITransactionService {
 
         List<Transaction> transactions = new List<Transaction>();
 
-        string sql = "SELECT id, user_id, amount, type, date FROM transactions WHERE user_id = @userId";
+        string sql = @"SELECT id, user_id, amount, type, date
+                       FROM transactions
+                       WHERE user_id = @userId";
+
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@userId", user.Id);
 
@@ -80,7 +87,7 @@ public class PostgresTransactionService : ITransactionService {
 
     
 
-    public Transaction ExecuteTransaction(string type,double amount) {
+    public void ExecuteTransaction(string type,double amount) {
 
         var user = _userService.GetLoggedInUser();
 
@@ -99,7 +106,7 @@ public class PostgresTransactionService : ITransactionService {
         var sql = @"
                 BEGIN;
                     UPDATE users
-                    SET balance = balance - @amount 
+                    SET balance = balance + @amount 
                     WHERE id = @userId; 
                 COMMIT;
 
@@ -121,7 +128,5 @@ public class PostgresTransactionService : ITransactionService {
         cmd.Parameters.AddWithValue("@date", transaction.Date);
 
         cmd.ExecuteNonQuery();
-
-        return transaction;
     }
 }

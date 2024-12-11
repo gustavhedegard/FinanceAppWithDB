@@ -3,6 +3,6 @@ public interface ITransactionService {
     double GetBalance();
     void RemoveTransaction(Guid id);
     List<Transaction> GetAllTransactions();
-    Transaction ExecuteTransaction(string type, double amount);
+    void ExecuteTransaction(string type, double amount);
 
 }
