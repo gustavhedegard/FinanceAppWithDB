@@ -9,7 +9,7 @@ public class RemoveTransactionCommand : Command {
 
         int i = 0;
         for (i = 0; i < transactions.Count; i++ ) {
-            Console.WriteLine($"TRANSACTION\nindex: {i}\nId: {transactions[i].Id}\nAmount: {transactions[i].Amount}");
+            Console.WriteLine($"TRANSACTION\nindex: {i}\n{transactions[i].ToString()}");
             Console.WriteLine("");
         }
 
