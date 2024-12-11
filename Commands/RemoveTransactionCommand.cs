@@ -7,15 +7,16 @@ public class RemoveTransactionCommand : Command {
 
         List<Transaction> transactions = transactionService.GetAllTransactions();
 
-        foreach (Transaction transaction in transactions) {
-            Console.WriteLine($"Id: {transaction.Id}\nAmount: {transaction.Amount}");
+        int i = 0;
+        for (i = 0; i < transactions.Count; i++ ) {
+            Console.WriteLine($"{i}\nId: {transactions[i].Id}\nAmount: {transactions[i].Amount}");
             Console.WriteLine("");
         }
 
         Console.WriteLine("Enter transaction to remove by id:");
 
-        Guid id = Guid.Parse(Console.ReadLine());
+        int input = int.Parse(Console.ReadLine());
 
-        transactionService.RemoveTransaction(id);
+        transactionService.RemoveTransaction(transactions[input].Id);
     }
 }

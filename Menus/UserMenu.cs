@@ -3,6 +3,7 @@ using FinanceApp;
 public class UserMenu : Menu {
     private IUserService _userService;
     public UserMenu( IUserService userService, IMenuService menuService, ITransactionService transactionService) {
+        _userService = userService;
         AddCommand(new LogoutCommand(userService, transactionService, menuService));
         AddCommand(new CheckBalanceCommand(userService, transactionService, menuService));
         AddCommand(new WithdrawCommand(userService, transactionService, menuService));
@@ -13,7 +14,11 @@ public class UserMenu : Menu {
     public override void Display() {
 
         var user = _userService.GetLoggedInUser();
-        Console.WriteLine($"Welcome!");
+        if(user == null) {
+            throw new ArgumentException("You are not logged in."); 
+        }
+
+        Console.WriteLine($"Welcome {user.Name}!");
     }
         
 }

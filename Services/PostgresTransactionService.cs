@@ -30,10 +30,6 @@ public class PostgresTransactionService : ITransactionService {
         return balance;
     }
 
-    public double TransferFunds(double amount, string type) {
-        return -1;
-        
-    }
     public void RemoveTransaction(Guid id) {
         var user = _userService.GetLoggedInUser();
 
