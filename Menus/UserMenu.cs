@@ -10,6 +10,10 @@ public class UserMenu : Menu {
         AddCommand(new RemoveTransactionCommand(userService, transactionService,menuService));
         AddCommand(new DepositCommand(userService, transactionService, menuService));
         AddCommand(new SearchByYearCommand(userService, transactionService, menuService));
+        AddCommand(new SearchByMonthCommand(userService, transactionService, menuService));
+        AddCommand(new SearchByWeekCommand(userService, transactionService, menuService));
+        AddCommand(new SearchByDayCommand(userService, transactionService, menuService));
+        AddCommand(new HelpCommand(userService, transactionService, menuService));
     }
 
     public override void Display() {

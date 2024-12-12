@@ -114,6 +114,112 @@ public class PostgresTransactionService : ITransactionService {
         return transactions;
     }
 
+    public List<Transaction> SearchByMonth(int year, int month) {
+
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+
+        var sql = @"SELECT *
+                    FROM transactions
+                    WHERE EXTRACT(YEAR FROM date) = @year
+                    AND EXTRACT(MONTH FROM date) = @month;";
+            
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@year", year);
+        cmd.Parameters.AddWithValue("@month", month);
+
+        using var reader = cmd.ExecuteReader();
+        while(reader.Read()) {
+            var transaction = new Transaction {
+
+                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                Type = reader.GetString(reader.GetOrdinal("type")),
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+            };
+
+            transactions.Add(transaction);
+        }
+
+        return transactions;
+    }
+
+    public List<Transaction> SearchByWeek(int year, int week) {
+
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+
+        var sql = @"SELECT *
+                    FROM transactions
+                    WHERE EXTRACT(YEAR FROM date) = @year
+                    AND EXTRACT(WEEK FROM date) = @week;";
+            
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@year", year);
+        cmd.Parameters.AddWithValue("@week", week);
+
+        using var reader = cmd.ExecuteReader();
+        while(reader.Read()) {
+            var transaction = new Transaction {
+
+                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                Type = reader.GetString(reader.GetOrdinal("type")),
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+            };
+
+            transactions.Add(transaction);
+        }
+
+        return transactions;
+    }
+
+    public List<Transaction> SearchByDay(DateTime date) {
+
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+
+        var sql = @"SELECT *
+                    FROM transactions
+                    WHERE date::DATE = @specificDate;";
+            
+        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
+        cmd.Parameters.AddWithValue("@specificDate", date);
+
+        using var reader = cmd.ExecuteReader();
+        while(reader.Read()) {
+            var transaction = new Transaction {
+
+                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                Type = reader.GetString(reader.GetOrdinal("type")),
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+            };
+
+            transactions.Add(transaction);
+        }
+
+        return transactions;
+    }
+
     public void ExecuteTransaction(string type,double amount) {
 
         var user = _userService.GetLoggedInUser();
