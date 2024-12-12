@@ -53,157 +53,102 @@ public class PostgresTransactionService : ITransactionService {
             throw new ArgumentException("You're not logged in!");
         }
 
-        List<Transaction> transactions = new List<Transaction>();
-
         string sql = @"SELECT id, user_id, amount, type, date
                        FROM transactions
                        WHERE user_id = @userId";
 
-        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@userId", user.Id);
+        var parameters = new List<KeyValuePair<string, object>>{
+            new KeyValuePair<string, object>("@userId", user.Id)
+        };
 
-        using var reader = cmd.ExecuteReader();
-
-        while (reader.Read())
-        {
-            var transaction = new Transaction
-            {
-                Id = reader.GetGuid(reader.GetOrdinal("id")),
-                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
-                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
-                Type = reader.GetString(reader.GetOrdinal("type")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
-            };
-
-            transactions.Add(transaction);
-        }
+        var transactions = SearchTransactions(sql, parameters);
 
         return transactions;
+        
     }
-
+    
     public List<Transaction> SearchByYear(int year) {
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
-
-        List<Transaction> transactions = new List<Transaction>();
-
         var sql = @"SELECT *
                     FROM transactions
                     WHERE EXTRACT(YEAR FROM date) = @year;";
-            
-        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@year", year);
 
-        using var reader = cmd.ExecuteReader();
-        while(reader.Read()) {
-            var transaction = new Transaction {
+        var parameters = new List<KeyValuePair<string, object>>{
+            new KeyValuePair<string, object>("@year", year)
+        };
 
-                Id = reader.GetGuid(reader.GetOrdinal("id")),
-                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
-                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
-                Type = reader.GetString(reader.GetOrdinal("type")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
-            };
-
-            transactions.Add(transaction);
-        }
+        var transactions = SearchTransactions(sql, parameters);
 
         return transactions;
     }
 
+    
     public List<Transaction> SearchByMonth(int year, int month) {
-
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
-
-        List<Transaction> transactions = new List<Transaction>();
 
         var sql = @"SELECT *
                     FROM transactions
                     WHERE EXTRACT(YEAR FROM date) = @year
                     AND EXTRACT(MONTH FROM date) = @month;";
             
-        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@year", year);
-        cmd.Parameters.AddWithValue("@month", month);
 
-        using var reader = cmd.ExecuteReader();
-        while(reader.Read()) {
-            var transaction = new Transaction {
+        var parameters = new List<KeyValuePair<string, object>>{
+            new KeyValuePair<string, object>("@year", year),
+            new KeyValuePair<string, object>("@month", month)
+        };
 
-                Id = reader.GetGuid(reader.GetOrdinal("id")),
-                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
-                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
-                Type = reader.GetString(reader.GetOrdinal("type")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
-            };
-
-            transactions.Add(transaction);
-        }
+        var transactions = SearchTransactions(sql, parameters);
 
         return transactions;
     }
 
     public List<Transaction> SearchByWeek(int year, int week) {
 
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
-
-        List<Transaction> transactions = new List<Transaction>();
-
         var sql = @"SELECT *
                     FROM transactions
                     WHERE EXTRACT(YEAR FROM date) = @year
                     AND EXTRACT(WEEK FROM date) = @week;";
             
-        using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@year", year);
-        cmd.Parameters.AddWithValue("@week", week);
+        var parameters = new List<KeyValuePair<string, object>>{
+            new KeyValuePair<string, object>("@year", year),
+            new KeyValuePair<string, object>("@week", week)
+        };
 
-        using var reader = cmd.ExecuteReader();
-        while(reader.Read()) {
-            var transaction = new Transaction {
-
-                Id = reader.GetGuid(reader.GetOrdinal("id")),
-                User = new User { Id = reader.GetGuid(reader.GetOrdinal("user_id")) },
-                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
-                Type = reader.GetString(reader.GetOrdinal("type")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
-            };
-
-            transactions.Add(transaction);
-        }
+        var transactions = SearchTransactions(sql, parameters);
 
         return transactions;
     }
 
     public List<Transaction> SearchByDay(DateTime date) {
 
+        var sql = @"SELECT *
+                    FROM transactions
+                    WHERE date::DATE = @specificDate;";
+            
+        var parameters = new List<KeyValuePair<string, object>>{
+            new KeyValuePair<string, object>("@specificDate", date)
+        };
+
+        var transactions = SearchTransactions(sql, parameters);
+
+        return transactions;
+    }
+
+    public List<Transaction> SearchTransactions(string sql, List<KeyValuePair<string, object>> parameters) {
+
         var user = _userService.GetLoggedInUser();
 
         if(user == null){
             throw new ArgumentException("You're not logged in!");
         }
 
-        List<Transaction> transactions = new List<Transaction>();
-
-        var sql = @"SELECT *
-                    FROM transactions
-                    WHERE date::DATE = @specificDate;";
-            
+        var transactions = new List<Transaction>();
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
-        cmd.Parameters.AddWithValue("@specificDate", date);
+
+        foreach (var kvp in parameters) {
+            cmd.Parameters.AddWithValue(kvp.Key, kvp.Value);
+        }
 
         using var reader = cmd.ExecuteReader();
+
         while(reader.Read()) {
             var transaction = new Transaction {
 

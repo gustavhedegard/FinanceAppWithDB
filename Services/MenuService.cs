@@ -1,10 +1,4 @@
-public interface IMenuService {
-    void SetMenu(Menu menu);
-    Menu GetMenu();
-
-}
-
-public class SimpleMenuService : IMenuService
+public class MenuService : IMenuService
 {
     private Menu menu = new EmptyMenu();
 
@@ -18,9 +12,4 @@ public class SimpleMenuService : IMenuService
         this.menu = menu;
         this.menu.Display();
     }
-}
-
-class EmptyMenu : Menu
-{
-    public override void Display() {}
 }

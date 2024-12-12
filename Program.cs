@@ -33,7 +33,8 @@ class Program
 
         IUserService userService = new PostgresUserService(npgsqlConnection);
         ITransactionService transactionService = new PostgresTransactionService(npgsqlConnection, userService);
-        IMenuService menuService = new SimpleMenuService();
+        IMenuService menuService = new MenuService();
+
         var loginMenu = new LoginMenu(userService, menuService, transactionService);
         menuService.SetMenu(loginMenu);
 
