@@ -180,32 +180,18 @@ public class PostgresTransactionService : ITransactionService {
             Date = DateTime.Now,
             Type = type
         };
-                         
+
         var sql = $@"
-                DO $$
-        DECLARE
-            sufficient_funds DECIMAL;
-        BEGIN
-            -- Check the user's balance
-            SELECT balance INTO sufficient_funds
-            FROM users
-            WHERE id = '{user.Id}';
+                BEGIN;
+                UPDATE users
+                SET balance = balance + @amount
+                WHERE id = @userId;
+                COMMIT;
 
-            -- Raise an exception if insufficient funds
-            IF sufficient_funds < {amount} THEN
-                RAISE EXCEPTION 'Insufficient funds';
-            END IF;
-            END $$;
-
-            -- Insert the transaction
-            INSERT INTO transactions (id, user_id, amount, type, date)
-            VALUES (@id, @userId, @amount, @type, @date);
-
-            -- Update the user's balance
-            UPDATE users
-            SET balance = balance + @amount
-            WHERE id = @userId;
-        ";
+                INSERT INTO transactions (id, user_id, amount, type, date)
+                VALUES (@id, @userId, @amount, @type, @date);
+                COMMIT;
+            ";
 
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", transaction.Id);
