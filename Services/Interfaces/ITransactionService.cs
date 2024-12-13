@@ -7,6 +7,7 @@ public interface ITransactionService {
     List<Transaction> SearchByMonth(int year, int month);
     List<Transaction> SearchByWeek(int year, int week);
     List<Transaction> SearchByDay(DateTime date);
+    bool ValidateBalance(double amount);
 
 
 }

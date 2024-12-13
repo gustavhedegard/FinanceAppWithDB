@@ -181,12 +181,11 @@ public class PostgresTransactionService : ITransactionService {
             Type = type
         };
 
-        var sql = $@"
+        var sql = @"
                 BEGIN;
                 UPDATE users
                 SET balance = balance + @amount
                 WHERE id = @userId;
-                COMMIT;
 
                 INSERT INTO transactions (id, user_id, amount, type, date)
                 VALUES (@id, @userId, @amount, @type, @date);
@@ -201,5 +200,20 @@ public class PostgresTransactionService : ITransactionService {
         cmd.Parameters.AddWithValue("@date", transaction.Date);
 
         cmd.ExecuteNonQuery();
+    }
+
+    public bool ValidateBalance(double amount) {
+
+        bool insufficientFunds;
+        double balance = GetBalance();
+
+        if(balance >= amount) {
+           insufficientFunds = false;
+        }
+        else {
+            insufficientFunds = true;
+        }
+
+        return insufficientFunds;
     }
 }
