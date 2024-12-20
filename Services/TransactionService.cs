@@ -68,12 +68,20 @@ public class PostgresTransactionService : ITransactionService {
     }
     
     public List<Transaction> SearchByYear(int year) {
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
         var sql = @"SELECT *
                     FROM transactions
-                    WHERE EXTRACT(YEAR FROM date) = @year;";
+                    WHERE EXTRACT(YEAR FROM date) = @year
+                    AND user_id = @UserId;";
 
         var parameters = new List<KeyValuePair<string, object>>{
-            new KeyValuePair<string, object>("@year", year)
+            new KeyValuePair<string, object>("@year", year),
+            new KeyValuePair<string, object>("@userId", user.Id)
         };
 
         var transactions = SearchTransactions(sql, parameters);
@@ -83,16 +91,24 @@ public class PostgresTransactionService : ITransactionService {
 
     
     public List<Transaction> SearchByMonth(int year, int month) {
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
 
         var sql = @"SELECT *
                     FROM transactions
                     WHERE EXTRACT(YEAR FROM date) = @year
-                    AND EXTRACT(MONTH FROM date) = @month;";
+                    AND EXTRACT(MONTH FROM date) = @month
+                    AND user_id = @UserId;";
             
 
         var parameters = new List<KeyValuePair<string, object>>{
             new KeyValuePair<string, object>("@year", year),
-            new KeyValuePair<string, object>("@month", month)
+            new KeyValuePair<string, object>("@month", month),
+            new KeyValuePair<string, object>("@userId", user.Id)
         };
 
         var transactions = SearchTransactions(sql, parameters);
@@ -101,15 +117,23 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> SearchByWeek(int year, int week) {
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
 
         var sql = @"SELECT *
                     FROM transactions
                     WHERE EXTRACT(YEAR FROM date) = @year
-                    AND EXTRACT(WEEK FROM date) = @week;";
+                    AND EXTRACT(WEEK FROM date) = @week
+                    AND user_id = @UserId;";
             
         var parameters = new List<KeyValuePair<string, object>>{
             new KeyValuePair<string, object>("@year", year),
-            new KeyValuePair<string, object>("@week", week)
+            new KeyValuePair<string, object>("@week", week),
+            new KeyValuePair<string, object>("@userId", user.Id)
         };
 
         var transactions = SearchTransactions(sql, parameters);
@@ -118,13 +142,21 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> SearchByDay(DateTime date) {
+        var user = _userService.GetLoggedInUser();
+
+        if(user == null){
+            throw new ArgumentException("You're not logged in!");
+        }
+
 
         var sql = @"SELECT *
                     FROM transactions
-                    WHERE date::DATE = @specificDate;";
+                    WHERE date::DATE = @specificDate
+                    AND user_id = @UserId;";
             
         var parameters = new List<KeyValuePair<string, object>>{
-            new KeyValuePair<string, object>("@specificDate", date)
+            new KeyValuePair<string, object>("@specificDate", date),
+            new KeyValuePair<string, object>("@userId", user.Id)
         };
 
         var transactions = SearchTransactions(sql, parameters);

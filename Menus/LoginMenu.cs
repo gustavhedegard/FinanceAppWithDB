@@ -6,6 +6,6 @@ public class LoginMenu : Menu {
     }
 
     public override void Display() {
-        Console.WriteLine("Welcome to The Bank!\nPlease type 'login' or 'register-user'.");
+        Console.WriteLine("Welcome to The Bank!\nPlease type 'login <name> <password>' or 'register-user'.");
     }
 }
