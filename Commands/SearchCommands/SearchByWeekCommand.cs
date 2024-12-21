@@ -1,5 +1,5 @@
 public class SearchByWeekCommand : Command {
-    public SearchByWeekCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("search-week","search all transactions from a certain week (YYYY WW)", userService, transactionService, menuService) {
+    public SearchByWeekCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("search-week", transactionService, utilitiesService) {
 
     }
 
@@ -14,5 +14,7 @@ public class SearchByWeekCommand : Command {
             Console.WriteLine(transaction.ToString());
             Console.WriteLine("");
         }
+        
+        utilitiesService.PressKeyToContinue();
     }
 }

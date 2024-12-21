@@ -1,7 +1,7 @@
 using System.Runtime;
 
 public class SearchByYearCommand : Command {
-    public SearchByYearCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("search-year","search all transactions from a single year", userService, transactionService, menuService) {
+    public SearchByYearCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("search-year",transactionService, utilitiesService) {
 
     }
 
@@ -18,6 +18,7 @@ public class SearchByYearCommand : Command {
         }
 
         Console.WriteLine($"Money spent : {spentAndEarned[0]}\nMoney earned : {spentAndEarned[1]}");
+        utilitiesService.PressKeyToContinue();
     }
 
     public double[] ShowSpentAndEarned(List<Transaction> transactions){

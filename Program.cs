@@ -32,10 +32,11 @@ class Program
         executeSqlCmd.ExecuteNonQuery();
 
         IUserService userService = new PostgresUserService(npgsqlConnection);
-        ITransactionService transactionService = new PostgresTransactionService(npgsqlConnection, userService);
+        IUtilitiesService utilitiesService = new UtilitiesService(npgsqlConnection, userService);
+        ITransactionService transactionService = new PostgresTransactionService(npgsqlConnection, utilitiesService);
         IMenuService menuService = new MenuService();
 
-        var loginMenu = new LoginMenu(userService, menuService, transactionService);
+        var loginMenu = new LoginMenu(userService, menuService, transactionService, utilitiesService);
         menuService.SetMenu(loginMenu);
 
         while(true) {

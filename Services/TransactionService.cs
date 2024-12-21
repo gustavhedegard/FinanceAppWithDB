@@ -2,21 +2,17 @@ using Npgsql;
 public class PostgresTransactionService : ITransactionService {
 
     private NpgsqlConnection _npgsqlConnection;
-    private IUserService _userService;
+    private IUtilitiesService _utilitiesService;
 
-    public PostgresTransactionService(NpgsqlConnection npgsqlConnection, IUserService userService) {
+    public PostgresTransactionService(NpgsqlConnection npgsqlConnection, IUtilitiesService utilitiesService) {
         _npgsqlConnection = npgsqlConnection;
-        _userService = userService;
+        _utilitiesService = utilitiesService;
     }
 
     public double GetBalance() {
         var sql = "SELECT balance FROM users WHERE id = @id";
 
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null) {
-            throw new ArgumentException("You are not logged in."); 
-        }
+        var user = _utilitiesService.ValidateUser();
 
         using var cmd = new NpgsqlCommand(sql,_npgsqlConnection);
         cmd.Parameters.AddWithValue("@id", user.Id);
@@ -31,11 +27,6 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public void RemoveTransaction(Guid id) {
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null) {
-            throw new ArgumentException("You are not logged in."); 
-        }
 
         var sql = @"DELETE FROM transactions
                     WHERE id = @id;";
@@ -47,11 +38,8 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> GetAllTransactions() {
-        var user = _userService.GetLoggedInUser();
 
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
+        var user = _utilitiesService.ValidateUser();
 
         string sql = @"SELECT id, user_id, amount, type, date
                        FROM transactions
@@ -68,11 +56,8 @@ public class PostgresTransactionService : ITransactionService {
     }
     
     public List<Transaction> SearchByYear(int year) {
-        var user = _userService.GetLoggedInUser();
 
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
+        var user = _utilitiesService.ValidateUser();
 
         var sql = @"SELECT *
                     FROM transactions
@@ -91,12 +76,8 @@ public class PostgresTransactionService : ITransactionService {
 
     
     public List<Transaction> SearchByMonth(int year, int month) {
-        var user = _userService.GetLoggedInUser();
 
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
-
+        var user = _utilitiesService.ValidateUser();
 
         var sql = @"SELECT *
                     FROM transactions
@@ -117,11 +98,8 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> SearchByWeek(int year, int week) {
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
+       
+       var user = _utilitiesService.ValidateUser();
 
 
         var sql = @"SELECT *
@@ -142,12 +120,8 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> SearchByDay(DateTime date) {
-        var user = _userService.GetLoggedInUser();
 
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
-
+        var user = _utilitiesService.ValidateUser();
 
         var sql = @"SELECT *
                     FROM transactions
@@ -165,12 +139,6 @@ public class PostgresTransactionService : ITransactionService {
     }
 
     public List<Transaction> SearchTransactions(string sql, List<KeyValuePair<string, object>> parameters) {
-
-        var user = _userService.GetLoggedInUser();
-
-        if(user == null){
-            throw new ArgumentException("You're not logged in!");
-        }
 
         var transactions = new List<Transaction>();
         using var cmd = new NpgsqlCommand(sql, _npgsqlConnection);
@@ -199,11 +167,7 @@ public class PostgresTransactionService : ITransactionService {
 
     public void ExecuteTransaction(string type,double amount) {
 
-        var user = _userService.GetLoggedInUser();
-
-        if (user == null) {
-            throw new ArgumentException("You are not logged in.");
-        }
+        var user = _utilitiesService.ValidateUser();
 
         var transaction = new Transaction {
             Id = Guid.NewGuid(),

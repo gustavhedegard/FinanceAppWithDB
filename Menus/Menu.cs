@@ -13,8 +13,9 @@ public abstract class Menu {
                 return;
             }
         }
+       
+        Console.WriteLine("Please enter a valid command");
 
-        throw new ArgumentException("Command not found");
     }
     public abstract void Display();
 }

@@ -1,7 +1,6 @@
 public class LoginCommand : Command {
 
-    public LoginCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("login","Log in with name and password", userService, transactionService, menuService) {
-
+    public LoginCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService, IUtilitiesService utilitiesService) : base("login", userService, transactionService, menuService, utilitiesService) {
 
     }
 
@@ -17,7 +16,8 @@ public class LoginCommand : Command {
         }
         
             Console.WriteLine("Login succeeded,");
-            menuService.SetMenu(new UserMenu(userService,menuService,transactionService));
+            utilitiesService.PressKeyToContinue();
+            menuService.SetMenu(new UserMenu(userService,menuService,transactionService, utilitiesService));
 
     }
 }

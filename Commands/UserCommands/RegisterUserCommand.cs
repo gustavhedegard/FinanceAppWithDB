@@ -1,5 +1,5 @@
 public class RegisterUserCommand : Command {
-    public RegisterUserCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("register-user","register with name and password", userService, transactionService, menuService) {
+    public RegisterUserCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService, IUtilitiesService utilitiesService) : base("register-user", userService, transactionService, menuService, utilitiesService) {
 
     }
 
@@ -11,6 +11,7 @@ public class RegisterUserCommand : Command {
         User user = userService.RegisterUser(name, password);
 
         Console.WriteLine($"Created user '{user.Name}'");
+        utilitiesService.PressKeyToContinue();
 
     }
 }

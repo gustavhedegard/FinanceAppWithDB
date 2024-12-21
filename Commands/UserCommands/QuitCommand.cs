@@ -1,6 +1,6 @@
 public class QuitCommand : Command {
 
-    public QuitCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("quit","quit the application", userService, transactionService, menuService) {
+    public QuitCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService, IUtilitiesService utilitiesService) : base("quit", userService, transactionService, menuService, utilitiesService) {
 
      }
 

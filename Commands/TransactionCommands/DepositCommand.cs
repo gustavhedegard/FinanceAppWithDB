@@ -1,6 +1,6 @@
 public class DepositCommand : Command {
 
-    public DepositCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("deposit","Make a deposit", userService, transactionService, menuService) {
+    public DepositCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("deposit", transactionService, utilitiesService) {
 
     }
 
@@ -10,5 +10,6 @@ public class DepositCommand : Command {
 
         transactionService.ExecuteTransaction(type, amount);
         Console.WriteLine($"You successfully deposited: {amount}");
+        utilitiesService.PressKeyToContinue();
     }
 }

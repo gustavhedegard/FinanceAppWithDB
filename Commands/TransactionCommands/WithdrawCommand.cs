@@ -1,6 +1,6 @@
 public class WithdrawCommand : Command {
 
-    public WithdrawCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("withdraw","Make a withdrawal", userService, transactionService, menuService) {
+    public WithdrawCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("withdraw",transactionService, utilitiesService) {
 
     }
 
@@ -17,5 +17,7 @@ public class WithdrawCommand : Command {
         transactionService.ExecuteTransaction(type, -amount);
         Console.WriteLine($"You successfully withdrew: {amount}");
         }
+
+        utilitiesService.PressKeyToContinue();
     }
 }

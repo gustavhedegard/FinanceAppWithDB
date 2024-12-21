@@ -1,5 +1,5 @@
 public class SearchByMonthCommand : Command {
-    public SearchByMonthCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("search-month","search all transactions from a month (YYYY MM)", userService, transactionService, menuService) {
+    public SearchByMonthCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("search-month", transactionService, utilitiesService) {
 
     }
 
@@ -14,5 +14,7 @@ public class SearchByMonthCommand : Command {
             Console.WriteLine(transaction.ToString());
             Console.WriteLine("");
         }
+
+        utilitiesService.PressKeyToContinue();
     }
 }

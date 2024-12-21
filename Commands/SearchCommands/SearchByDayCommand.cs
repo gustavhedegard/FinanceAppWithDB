@@ -1,5 +1,5 @@
 public class SearchByDayCommand : Command {
-    public SearchByDayCommand(IUserService userService, ITransactionService transactionService, IMenuService menuService) : base("search-day","search all transactions from a certain date (YYYY-MM-DD)", userService, transactionService, menuService) {
+    public SearchByDayCommand(ITransactionService transactionService, IUtilitiesService utilitiesService) : base("search-day", transactionService, utilitiesService) {
 
     }
 
@@ -13,5 +13,7 @@ public class SearchByDayCommand : Command {
             Console.WriteLine(transaction.ToString());
             Console.WriteLine("");
         }
+
+        utilitiesService.PressKeyToContinue();
     }
 }
