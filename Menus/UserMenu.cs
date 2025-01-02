@@ -19,7 +19,7 @@ public class UserMenu : Menu {
 
         var user = _userService.GetLoggedInUser();
         if(user == null) {
-            throw new ArgumentException("You are not logged in."); 
+            throw new ArgumentException("You are not logged in.");
         }
 
         Console.WriteLine($"Welcome {user.Name}!");

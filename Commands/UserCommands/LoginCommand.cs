@@ -15,7 +15,8 @@ public class LoginCommand : Command {
             return;
         }
         
-            Console.WriteLine("Login succeeded,");
+            Console.WriteLine("Login succeeded");
+            utilitiesService.PressKeyToContinue();
             menuService.SetMenu(new UserMenu(userService,menuService,transactionService, utilitiesService));
 
     }
