@@ -9,7 +9,7 @@ public class SearchByYearCommand : Command {
         int year = int.Parse(args[1]);
 
         List<Transaction> transactions = transactionService.SearchByYear(year);
-        double[] spentAndEarned = ShowSpentAndEarned(transactions);
+        double[] spentAndEarned = utilitiesService.ShowSpentAndEarned(transactions);
 
         foreach(Transaction transaction in transactions) {
 
@@ -19,20 +19,5 @@ public class SearchByYearCommand : Command {
 
         Console.WriteLine($"Money spent : {spentAndEarned[0]}\nMoney earned : {spentAndEarned[1]}");
         utilitiesService.PressKeyToContinue();
-    }
-
-    public double[] ShowSpentAndEarned(List<Transaction> transactions){
-
-        double[] spentAndEarned = new double[2];
-        
-        foreach(Transaction transaction in transactions) {
-            if (transaction.Amount < 0) {
-                spentAndEarned[0] += transaction.Amount;
-            } else {
-                spentAndEarned[1] += transaction.Amount;
-            }
-        }
-
-        return spentAndEarned;    
     }
 }

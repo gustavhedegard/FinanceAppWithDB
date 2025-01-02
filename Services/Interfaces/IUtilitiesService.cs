@@ -1,4 +1,5 @@
 public interface IUtilitiesService {
     void PressKeyToContinue();
-    User? ValidateUser(); 
+    User? ValidateUser();
+    double[] ShowSpentAndEarned(List<Transaction> transactions);
 }

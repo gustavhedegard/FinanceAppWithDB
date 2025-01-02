@@ -23,4 +23,19 @@ public class UtilitiesService : IUtilitiesService {
 
         return user;
     }
+
+    public double[] ShowSpentAndEarned(List<Transaction> transactions){
+
+        double[] spentAndEarned = new double[2];
+        
+        foreach(Transaction transaction in transactions) {
+            if (transaction.Amount < 0) {
+                spentAndEarned[0] += transaction.Amount;
+            } else {
+                spentAndEarned[1] += transaction.Amount;
+            }
+        }
+
+        return spentAndEarned;    
+    }
 }

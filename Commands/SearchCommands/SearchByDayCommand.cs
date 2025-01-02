@@ -7,6 +7,7 @@ public class SearchByDayCommand : Command {
         DateTime date = DateTime.Parse(args[1]);
 
         List<Transaction> transactions = transactionService.SearchByDay(date);
+        double[] spentAndEarned = utilitiesService.ShowSpentAndEarned(transactions);
 
         foreach(Transaction transaction in transactions) {
 
@@ -14,6 +15,7 @@ public class SearchByDayCommand : Command {
             Console.WriteLine("");
         }
 
+        Console.WriteLine($"Money spent : {spentAndEarned[0]}\nMoney earned : {spentAndEarned[1]}");
         utilitiesService.PressKeyToContinue();
     }
 }

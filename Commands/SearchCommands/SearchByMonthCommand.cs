@@ -8,6 +8,7 @@ public class SearchByMonthCommand : Command {
         int month = int.Parse(args[2]);
 
         List<Transaction> transactions = transactionService.SearchByMonth(year, month);
+        double[] spentAndEarned = utilitiesService.ShowSpentAndEarned(transactions);
 
         foreach(Transaction transaction in transactions) {
 
@@ -15,6 +16,7 @@ public class SearchByMonthCommand : Command {
             Console.WriteLine("");
         }
 
+        Console.WriteLine($"Money spent : {spentAndEarned[0]}\nMoney earned : {spentAndEarned[1]}");
         utilitiesService.PressKeyToContinue();
     }
 }
