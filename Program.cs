@@ -38,11 +38,19 @@ class Program
 
         var loginMenu = new LoginMenu(userService, menuService, transactionService, utilitiesService);
         menuService.SetMenu(loginMenu);
+        var userMenu = new UserMenu(userService, menuService, transactionService, utilitiesService);
 
         while(true) {
             string? inputCommand = Console.ReadLine();
             if (inputCommand != null) {
-                menuService.GetMenu().ExecuteCommand(inputCommand);
+                try {
+                    menuService.GetMenu().ExecuteCommand(inputCommand);
+                } catch {
+                    Console.WriteLine("Please enter a valid input");
+                    utilitiesService.PressKeyToContinue();
+                    menuService.SetMenu(userMenu); 
+                }
+                
             } else {
                 break;
             }

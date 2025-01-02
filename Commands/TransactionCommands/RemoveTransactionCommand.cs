@@ -7,8 +7,8 @@ public class RemoveTransactionCommand : Command {
 
         List<Transaction> transactions = transactionService.GetAllTransactions();
 
-        int i = 0;
-        for (i = 0; i < transactions.Count; i++) {
+        
+        for (int i = 0; i < transactions.Count; i++) {
             Console.WriteLine($"TRANSACTION\nindex: {i}\n{transactions[i]}");
             Console.WriteLine("");
         }
