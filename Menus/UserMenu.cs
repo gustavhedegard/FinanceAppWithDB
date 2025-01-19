@@ -31,7 +31,7 @@ public class UserMenu : Menu {
         Console.WriteLine("search-year <year>");
         Console.WriteLine("search-month <year> <month>");
         Console.WriteLine("search-week <year> <week>");
-        Console.WriteLine("search-day <YYYYMMDD>");
+        Console.WriteLine("search-day <YYYY-MM-DD>");
         Console.WriteLine("logout");
         Console.WriteLine("--------------------------------------------------------------------------------");
     }

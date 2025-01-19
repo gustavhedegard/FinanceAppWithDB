@@ -40,7 +40,7 @@ public class PostgresUserService : IUserService {
             Password = password,
             Balance = 0
         };
-
+        
         var sql = @"INSERT INTO users (id, name, password, balance) VALUES (
             @id,
             @name,

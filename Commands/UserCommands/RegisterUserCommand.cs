@@ -7,11 +7,11 @@ public class RegisterUserCommand : Command {
 
         string name = args[1];
         string password = args[2];
-
+    
         User user = userService.RegisterUser(name, password);
 
         Console.WriteLine($"Created user '{user.Name}'");
         utilitiesService.PressKeyToContinue();
-
+        
     }
 }

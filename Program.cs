@@ -48,7 +48,13 @@ class Program
                 } catch {
                     Console.WriteLine("Please enter a valid input");
                     utilitiesService.PressKeyToContinue();
-                    menuService.SetMenu(userMenu); 
+                    var user = userService.GetLoggedInUser();
+                    if(user == null) {
+                        menuService.SetMenu(loginMenu);
+                    }
+                    else {
+                        menuService.SetMenu(userMenu);
+                    }
                 }
                 
             } else {

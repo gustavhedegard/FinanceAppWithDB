@@ -1,5 +1,5 @@
 public abstract class Menu {
-    private List<Command> commands = new List<Command>();
+    protected List<Command> commands = new List<Command>();
     public void AddCommand(Command command) {
         commands.Add(command);
     }
